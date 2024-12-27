@@ -28,7 +28,7 @@ export default function Login() {
             supabaseClient={supabase}
             appearance={{ theme: ThemeSupa }}
             theme="light"
-            providers={[]}
+            providers={["github"]}
           />
         </div>
       </div>
