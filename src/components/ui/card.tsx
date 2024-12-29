@@ -39,7 +39,7 @@ const CardTitle = React.forwardRef<
       "text-xl font-semibold leading-none tracking-tight",
       className
     )}
-    {...props>
+    {...props}
   />
 ))
 CardTitle.displayName = "CardTitle"
