@@ -22,7 +22,6 @@ async function fetchRoom(roomId: string) {
   return data;
 }
 
-// Fetch existing bookings for the room
 async function fetchBookings(roomId: string) {
   const { data, error } = await supabase
     .from('bookings')
@@ -33,7 +32,6 @@ async function fetchBookings(roomId: string) {
   return data;
 }
 
-// Create a new booking
 async function createBooking({ roomId, startTime, endTime }: { roomId: string, startTime: Date, endTime: Date }) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("User not authenticated");
@@ -127,7 +125,6 @@ export default function Booking() {
   return (
     <div className="container py-12">
       <Card>
-        <ImageCarousel className="mb-4" />
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Music className="h-5 w-5 text-primary" />
@@ -136,15 +133,20 @@ export default function Booking() {
           <CardDescription>{room.description}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div>
-            <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
-              <CalendarDays className="h-5 w-5" />
-              Select Date
-            </h3>
-            <BookingCalendar
-              selectedDate={selectedDate}
-              setSelectedDate={setSelectedDate}
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
+                <CalendarDays className="h-5 w-5" />
+                Select Date
+              </h3>
+              <BookingCalendar
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+              />
+            </div>
+            <div>
+              <ImageCarousel className="rounded-lg overflow-hidden" />
+            </div>
           </div>
 
           {selectedDate && (
