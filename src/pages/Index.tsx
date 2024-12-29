@@ -100,7 +100,6 @@ const Index = () => {
         
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {isLoading ? (
-            // Loading skeletons
             Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="space-y-4 p-6 border rounded-lg">
                 <Skeleton className="h-6 w-3/4" />
@@ -111,7 +110,8 @@ const Index = () => {
             ))
           ) : rooms?.map((room) => (
             <RoomCard 
-              key={room.id} 
+              key={room.id}
+              id={room.id}
               name={room.name}
               description={room.description || ''}
               capacity={room.capacity}

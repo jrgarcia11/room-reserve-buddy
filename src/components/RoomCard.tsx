@@ -4,6 +4,7 @@ import { CalendarDays, Music } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface RoomCardProps {
+  id: string;
   name: string;
   description: string;
   capacity: number;
@@ -11,14 +12,15 @@ interface RoomCardProps {
   isAuthenticated: boolean;
 }
 
-export function RoomCard({ name, description, capacity, equipment, isAuthenticated }: RoomCardProps) {
+export function RoomCard({ id, name, description, capacity, equipment, isAuthenticated }: RoomCardProps) {
   const navigate = useNavigate();
 
   const handleBooking = () => {
     if (!isAuthenticated) {
       navigate("/login");
+      return;
     }
-    // Booking logic will be implemented later
+    navigate(`/booking/${id}`);
   };
 
   return (
