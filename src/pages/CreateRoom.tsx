@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,10 +11,15 @@ import { toast } from "sonner";
 
 const CreateRoom = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const editId = searchParams.get("edit");
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [capacity, setCapacity] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(!!editId);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -26,6 +31,36 @@ const CreateRoom = () => {
     };
     checkAuth();
   }, [navigate]);
+
+  useEffect(() => {
+    const fetchRoom = async () => {
+      if (!editId) return;
+
+      try {
+        const { data, error } = await supabase
+          .from("rooms")
+          .select("*")
+          .eq("id", editId)
+          .single();
+
+        if (error) throw error;
+
+        if (data) {
+          setName(data.name);
+          setDescription(data.description || "");
+          setCapacity(data.capacity.toString());
+        }
+      } catch (error) {
+        console.error("Error fetching room:", error);
+        toast.error("Failed to fetch room details");
+        navigate("/profile");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchRoom();
+  }, [editId, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,27 +75,54 @@ const CreateRoom = () => {
         return;
       }
 
-      const { error } = await supabase
-        .from("rooms")
-        .insert({
-          name,
-          description,
-          capacity: parseInt(capacity),
-          equipment: [],
-          user_id: user.id
-        });
+      const roomData = {
+        name,
+        description,
+        capacity: parseInt(capacity),
+        equipment: [],
+        user_id: user.id
+      };
+
+      let error;
+
+      if (editId) {
+        ({ error } = await supabase
+          .from("rooms")
+          .update(roomData)
+          .eq("id", editId));
+      } else {
+        ({ error } = await supabase
+          .from("rooms")
+          .insert(roomData));
+      }
 
       if (error) throw error;
 
-      toast.success("Room created successfully");
+      toast.success(editId ? "Room updated successfully" : "Room created successfully");
       navigate("/profile");
     } catch (error) {
-      console.error("Error creating room:", error);
-      toast.error("Failed to create room. Please try again.");
+      console.error("Error saving room:", error);
+      toast.error("Failed to save room. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-slate-50 py-12">
+        <div className="container px-4 max-w-2xl mx-auto">
+          <Card>
+            <CardContent className="p-8">
+              <div className="flex items-center justify-center">
+                Loading...
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 py-12">
@@ -75,7 +137,7 @@ const CreateRoom = () => {
         </Button>
         <Card>
           <CardHeader>
-            <CardTitle>Create New Room</CardTitle>
+            <CardTitle>{editId ? "Edit Room" : "Create New Room"}</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -108,7 +170,7 @@ const CreateRoom = () => {
                 />
               </div>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Creating..." : "Create Room"}
+                {isSubmitting ? (editId ? "Updating..." : "Creating...") : (editId ? "Update Room" : "Create Room")}
               </Button>
             </form>
           </CardContent>

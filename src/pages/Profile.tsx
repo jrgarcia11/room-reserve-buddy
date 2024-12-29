@@ -156,6 +156,7 @@ const Profile = () => {
                       name={room.name}
                       description={room.description}
                       equipment={room.equipment}
+                      capacity={room.capacity}
                     />
                   ))}
                 </div>

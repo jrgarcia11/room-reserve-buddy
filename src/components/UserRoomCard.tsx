@@ -1,21 +1,24 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Music, Trash2 } from "lucide-react";
+import { Music, Trash2, Edit } from "lucide-react";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 interface UserRoomCardProps {
   id: string;
   name: string;
   description: string | null;
   equipment: string[] | null;
+  capacity: number;
 }
 
-export function UserRoomCard({ id, name, description, equipment }: UserRoomCardProps) {
+export function UserRoomCard({ id, name, description, equipment, capacity }: UserRoomCardProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const handleDelete = async () => {
     try {
@@ -35,6 +38,10 @@ export function UserRoomCard({ id, name, description, equipment }: UserRoomCardP
     } finally {
       setIsDeleting(false);
     }
+  };
+
+  const handleEdit = () => {
+    navigate(`/create-room?edit=${id}`);
   };
 
   return (
@@ -61,14 +68,23 @@ export function UserRoomCard({ id, name, description, equipment }: UserRoomCardP
                 </span>
               ))}
             </div>
-            <Button
-              variant="destructive"
-              size="icon"
-              onClick={handleDelete}
-              disabled={isDeleting}
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={handleEdit}
+              >
+                <Edit className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="destructive"
+                size="icon"
+                onClick={handleDelete}
+                disabled={isDeleting}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </CardContent>
