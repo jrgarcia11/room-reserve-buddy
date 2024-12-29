@@ -1,15 +1,26 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CalendarDays, Music } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface RoomCardProps {
   name: string;
   description: string;
   capacity: number;
   equipment: string[];
+  isAuthenticated: boolean;
 }
 
-export function RoomCard({ name, description, capacity, equipment }: RoomCardProps) {
+export function RoomCard({ name, description, capacity, equipment, isAuthenticated }: RoomCardProps) {
+  const navigate = useNavigate();
+
+  const handleBooking = () => {
+    if (!isAuthenticated) {
+      navigate("/login");
+    }
+    // Booking logic will be implemented later
+  };
+
   return (
     <Card className="w-full transition-all hover:shadow-lg">
       <CardHeader>
@@ -33,9 +44,12 @@ export function RoomCard({ name, description, capacity, equipment }: RoomCardPro
             ))}
           </div>
         </div>
-        <Button className="w-full gap-2">
+        <Button 
+          className="w-full gap-2" 
+          onClick={handleBooking}
+        >
           <CalendarDays className="h-4 w-4" />
-          Book Now
+          {isAuthenticated ? "Book Now" : "Login to Book"}
         </Button>
       </CardContent>
     </Card>
