@@ -20,7 +20,14 @@ export default function Login() {
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-primary mb-2">Practice Room Booking</h1>
+          <div className="mb-4">
+            <img 
+              src="/lovable-uploads/aac7c64e-04f1-43ba-9fc5-a6f47582a661.png" 
+              alt="Geometric illustration with figures" 
+              className="w-32 h-32 mx-auto"
+            />
+          </div>
+          <h1 className="text-3xl font-bold text-primary mb-2">Drum Room</h1>
           <p className="text-muted-foreground">Sign in to reserve your practice space</p>
         </div>
         <div className="bg-white p-6 rounded-lg shadow-md">
