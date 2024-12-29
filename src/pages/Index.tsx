@@ -1,6 +1,6 @@
 import { RoomCard } from "@/components/RoomCard";
 import { Button } from "@/components/ui/button";
-import { LogOut, LogIn } from "lucide-react";
+import { LogOut, LogIn, UserRound } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
@@ -64,12 +64,22 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-slate-50 py-12">
       <div className="container px-4">
-        <div className="flex justify-end mb-8">
+        <div className="flex justify-end mb-8 gap-2">
           {isAuthenticated ? (
-            <Button variant="outline" onClick={handleLogout}>
-              <LogOut className="mr-2 h-4 w-4" />
-              Logout
-            </Button>
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate("/profile")}
+                className="rounded-full"
+              >
+                <UserRound className="h-5 w-5" />
+              </Button>
+              <Button variant="outline" onClick={handleLogout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                Logout
+              </Button>
+            </>
           ) : (
             <Button variant="outline" onClick={handleLogin}>
               <LogIn className="mr-2 h-4 w-4" />

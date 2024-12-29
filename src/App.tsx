@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Booking from "./pages/Booking";
+import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
@@ -18,6 +19,7 @@ const App = () => (
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/booking/:roomId" element={<Booking />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/" element={<Index />} />
         </Routes>
       </BrowserRouter>
