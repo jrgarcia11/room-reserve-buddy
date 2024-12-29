@@ -11,7 +11,7 @@ export const Hero = ({ isAuthenticated }: HeroProps) => {
           alt="Geometric illustration with figures"
           className="w-32 h-32"
         />
-        <h1 className="text-4xl font-bold text-primary">Drum Room</h1>
+        <h1 className="text-4xl font-bold text-primary font-serif">Drum Room</h1>
       </div>
       <p className="mx-auto max-w-2xl text-lg text-muted-foreground text-center">
         Reserve your perfect practice space. Choose from our selection of
