@@ -6,6 +6,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { supabase } from "@/integrations/supabase/client";
+import { cn } from "@/lib/utils";
 
 const defaultImages = [
   "photo-1721322800607-8c38375eef04",
@@ -17,9 +18,10 @@ const defaultImages = [
 interface ImageCarouselProps {
   className?: string;
   images?: string[];
+  fullSize?: boolean;
 }
 
-export function ImageCarousel({ className, images }: ImageCarouselProps) {
+export function ImageCarousel({ className, images, fullSize = false }: ImageCarouselProps) {
   const renderImage = (imageId: string) => {
     if (images) {
       return `${supabase.storage.from('room-images').getPublicUrl(imageId).data.publicUrl}`;
@@ -37,7 +39,10 @@ export function ImageCarousel({ className, images }: ImageCarouselProps) {
             <img
               src={renderImage(imageId)}
               alt="Room"
-              className="w-full h-48 object-cover rounded-t-lg"
+              className={cn(
+                "w-full object-cover rounded-t-lg",
+                fullSize ? "h-full" : "h-48"
+              )}
             />
           </CarouselItem>
         ))}

@@ -152,10 +152,11 @@ export default function Booking() {
                 setSelectedDate={setSelectedDate}
               />
             </div>
-            <div>
+            <div className="h-[400px]">
               <ImageCarousel 
-                className="rounded-lg overflow-hidden" 
+                className="h-full rounded-lg overflow-hidden" 
                 images={room.images}
+                fullSize
               />
             </div>
           </div>
