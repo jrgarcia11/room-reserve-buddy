@@ -84,6 +84,7 @@ export type Database = {
           id: string
           name: string
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           capacity: number
@@ -93,6 +94,7 @@ export type Database = {
           id?: string
           name: string
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           capacity?: number
@@ -102,8 +104,17 @@ export type Database = {
           id?: string
           name?: string
           updated_at?: string
+          user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "rooms_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
