@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { CalendarDays, ArrowLeft, Plus, Clock, Building, Music } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
+import { UserRoomCard } from "@/components/UserRoomCard";
 
 type Booking = Tables<"bookings"> & {
   rooms: Tables<"rooms">;
@@ -149,31 +150,13 @@ const Profile = () => {
               ) : (
                 <div className="grid gap-4">
                   {rooms?.map((room) => (
-                    <Card key={room.id} className="hover:shadow-md transition-shadow">
-                      <CardContent className="p-4">
-                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <Music className="h-4 w-4 text-primary" />
-                              <h4 className="font-medium text-lg">{room.name}</h4>
-                            </div>
-                            <p className="text-sm text-muted-foreground mt-1 line-clamp-1">
-                              {room.description}
-                            </p>
-                          </div>
-                          <div className="flex flex-wrap gap-2">
-                            {room.equipment?.map((item) => (
-                              <span
-                                key={item}
-                                className="inline-block bg-secondary px-2 py-0.5 text-xs rounded"
-                              >
-                                {item}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <UserRoomCard
+                      key={room.id}
+                      id={room.id}
+                      name={room.name}
+                      description={room.description}
+                      equipment={room.equipment}
+                    />
                   ))}
                 </div>
               )}
