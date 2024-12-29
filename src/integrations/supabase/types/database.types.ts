@@ -85,6 +85,7 @@ export interface Database {
           name: string
           updated_at: string
           user_id: string | null
+          images: string[] | null
         }
         Insert: {
           capacity: number
@@ -95,6 +96,7 @@ export interface Database {
           name: string
           updated_at?: string
           user_id?: string | null
+          images?: string[] | null
         }
         Update: {
           capacity?: number
@@ -105,6 +107,7 @@ export interface Database {
           name?: string
           updated_at?: string
           user_id?: string | null
+          images?: string[] | null
         }
         Relationships: [
           {
