@@ -22,7 +22,7 @@ export function RoomCard({ name, description, capacity, equipment, isAuthenticat
   };
 
   return (
-    <Card className="w-full transition-all hover:shadow-lg">
+    <Card className="w-full transition-all">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Music className="h-5 w-5 text-primary" />
@@ -31,13 +31,13 @@ export function RoomCard({ name, description, capacity, equipment, isAuthenticat
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="mb-4">
+        <div className="mb-3">
           <p className="text-sm text-muted-foreground">Capacity: {capacity} people</p>
           <div className="mt-2">
             {equipment.map((item) => (
               <span
                 key={item}
-                className="mr-2 inline-block rounded-full bg-secondary px-3 py-1 text-xs"
+                className="mr-2 inline-block bg-secondary px-2 py-0.5 text-xs"
               >
                 {item}
               </span>
