@@ -5,32 +5,27 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const PRACTICE_ROOMS = [
-  {
-    name: "Piano Studio A",
-    description: "Professional acoustic piano room with sound treatment",
-    capacity: 3,
-    equipment: ["Grand Piano", "Music Stand", "Recording Equipment"],
-  },
-  {
-    name: "Ensemble Room B",
-    description: "Large space perfect for group practice",
-    capacity: 8,
-    equipment: ["Upright Piano", "Chairs", "Music Stands"],
-  },
-  {
-    name: "Practice Room C",
-    description: "Cozy space for individual practice",
-    capacity: 2,
-    equipment: ["Digital Piano", "Music Stand"],
-  },
-];
+async function fetchRooms() {
+  const { data, error } = await supabase
+    .from('rooms')
+    .select('*');
+  
+  if (error) throw error;
+  return data;
+}
 
 const Index = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+
+  const { data: rooms, isLoading, error } = useQuery({
+    queryKey: ['rooms'],
+    queryFn: fetchRooms,
+  });
 
   useEffect(() => {
     supabase.auth.onAuthStateChange((event, session) => {
@@ -57,6 +52,14 @@ const Index = () => {
   const handleLogin = () => {
     navigate("/login");
   };
+
+  if (error) {
+    toast({
+      title: "Error loading rooms",
+      description: "Please try again later",
+      variant: "destructive",
+    });
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 py-12">
@@ -96,10 +99,23 @@ const Index = () => {
         </div>
         
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {PRACTICE_ROOMS.map((room) => (
+          {isLoading ? (
+            // Loading skeletons
+            Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="space-y-4 p-6 border rounded-lg">
+                <Skeleton className="h-6 w-3/4" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-2/3" />
+                <Skeleton className="h-10 w-full" />
+              </div>
+            ))
+          ) : rooms?.map((room) => (
             <RoomCard 
-              key={room.name} 
-              {...room} 
+              key={room.id} 
+              name={room.name}
+              description={room.description || ''}
+              capacity={room.capacity}
+              equipment={room.equipment || []}
               isAuthenticated={isAuthenticated}
             />
           ))}
