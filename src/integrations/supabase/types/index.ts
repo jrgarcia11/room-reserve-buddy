@@ -1,2 +1,2 @@
-export * from './database.types'
-export * from './table.types'
+export * from './database.types';
+export * from './table.types';
