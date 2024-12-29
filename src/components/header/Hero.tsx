@@ -11,13 +11,13 @@ export const Hero = ({ isAuthenticated }: HeroProps) => {
           alt="Geometric illustration with figures"
           className="w-32 h-32"
         />
-        <h1 className="text-4xl font-bold text-primary font-bebas tracking-wider">Drum Room</h1>
+        <h1 className="text-6xl font-bold text-primary font-bebas tracking-wider">Drum Room</h1>
       </div>
-      <p className="mx-auto max-w-2xl text-lg text-muted-foreground text-center">
+      <p className="mx-auto max-w-2xl text-xl text-muted-foreground text-center">
         Reserve your perfect practice space. Choose from our selection of
         well-equipped rooms for individual or group practice.
         {!isAuthenticated && (
-          <span className="block mt-2 text-sm text-primary">
+          <span className="block mt-2 text-base text-primary">
             Login to book a room
           </span>
         )}
