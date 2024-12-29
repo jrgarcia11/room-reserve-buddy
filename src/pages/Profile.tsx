@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CalendarDays, ArrowLeft, Plus } from "lucide-react";
+import { CalendarDays, ArrowLeft, Plus, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 
@@ -107,37 +107,51 @@ const Profile = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Your Bookings</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <CalendarDays className="h-5 w-5 text-primary" />
+                Your Bookings
+              </CardTitle>
             </CardHeader>
             <CardContent>
               {isLoadingBookings ? (
                 <div className="space-y-4">
                   {[1, 2, 3].map((i) => (
-                    <Skeleton key={i} className="h-16 w-full" />
+                    <Skeleton key={i} className="h-24 w-full rounded-lg" />
                   ))}
                 </div>
               ) : bookings?.length === 0 ? (
-                <p className="text-muted-foreground">No bookings found</p>
+                <div className="text-center py-8">
+                  <CalendarDays className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+                  <p className="text-muted-foreground">No bookings found</p>
+                  <Button 
+                    variant="outline" 
+                    className="mt-4"
+                    onClick={() => navigate("/")}
+                  >
+                    Browse Rooms
+                  </Button>
+                </div>
               ) : (
-                <div className="space-y-4">
+                <div className="grid gap-4">
                   {bookings?.map((booking) => (
-                    <Card key={booking.id}>
+                    <Card key={booking.id} className="hover:shadow-md transition-shadow">
                       <CardContent className="p-4">
-                        <div className="flex items-start justify-between">
+                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                           <div>
-                            <h4 className="font-medium">{booking.rooms.name}</h4>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                            <h4 className="font-medium text-lg">{booking.rooms.name}</h4>
+                            <p className="text-sm text-muted-foreground line-clamp-1">
+                              {booking.rooms.description}
+                            </p>
+                          </div>
+                          <div className="flex flex-col gap-2 text-sm text-muted-foreground">
+                            <div className="flex items-center gap-2">
                               <CalendarDays className="h-4 w-4" />
+                              <span>{format(new Date(booking.start_time), "MMM d, yyyy")}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Clock className="h-4 w-4" />
                               <span>
-                                {format(
-                                  new Date(booking.start_time),
-                                  "MMM d, yyyy h:mm a"
-                                )}
-                                {" - "}
-                                {format(
-                                  new Date(booking.end_time),
-                                  "h:mm a"
-                                )}
+                                {format(new Date(booking.start_time), "h:mm a")} - {format(new Date(booking.end_time), "h:mm a")}
                               </span>
                             </div>
                           </div>
