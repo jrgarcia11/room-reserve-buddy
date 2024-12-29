@@ -34,9 +34,10 @@ export const RoomsList = ({ rooms, isLoading, isAuthenticated }: RoomsListProps)
           description={room.description || ""}
           capacity={room.capacity}
           equipment={room.equipment || []}
+          images={room.images}
           isAuthenticated={isAuthenticated}
         />
       ))}
     </div>
   );
-};
+}

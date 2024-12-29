@@ -10,10 +10,19 @@ interface RoomCardProps {
   description: string;
   capacity: number;
   equipment: string[];
+  images?: string[];
   isAuthenticated: boolean;
 }
 
-export function RoomCard({ id, name, description, capacity, equipment, isAuthenticated }: RoomCardProps) {
+export function RoomCard({ 
+  id, 
+  name, 
+  description, 
+  capacity, 
+  equipment, 
+  images,
+  isAuthenticated 
+}: RoomCardProps) {
   const navigate = useNavigate();
 
   const handleBooking = () => {
@@ -26,7 +35,7 @@ export function RoomCard({ id, name, description, capacity, equipment, isAuthent
 
   return (
     <Card className="w-full transition-all">
-      <ImageCarousel />
+      <ImageCarousel images={images} />
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Music className="h-5 w-5 text-primary" />

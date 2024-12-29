@@ -1,13 +1,12 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Plus, X } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
+import { RoomForm } from "@/components/rooms/RoomForm";
+import { useState } from "react";
 
 const CreateRoom = () => {
   const navigate = useNavigate();
@@ -15,13 +14,15 @@ const CreateRoom = () => {
   const searchParams = new URLSearchParams(location.search);
   const editId = searchParams.get("edit");
 
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [capacity, setCapacity] = useState("");
-  const [equipment, setEquipment] = useState<string[]>([]);
-  const [newEquipment, setNewEquipment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(!!editId);
+  const [initialData, setInitialData] = useState<{
+    name: string;
+    description: string;
+    capacity: string;
+    equipment: string[];
+    images: string[];
+  } | undefined>();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -48,10 +49,13 @@ const CreateRoom = () => {
         if (error) throw error;
 
         if (data) {
-          setName(data.name);
-          setDescription(data.description || "");
-          setCapacity(data.capacity.toString());
-          setEquipment(data.equipment || []);
+          setInitialData({
+            name: data.name,
+            description: data.description || "",
+            capacity: data.capacity.toString(),
+            equipment: data.equipment || [],
+            images: data.images || [],
+          });
         }
       } catch (error) {
         console.error("Error fetching room:", error);
@@ -65,18 +69,13 @@ const CreateRoom = () => {
     fetchRoom();
   }, [editId, navigate]);
 
-  const handleAddEquipment = () => {
-    if (!newEquipment.trim()) return;
-    setEquipment([...equipment, newEquipment.trim()]);
-    setNewEquipment("");
-  };
-
-  const handleRemoveEquipment = (index: number) => {
-    setEquipment(equipment.filter((_, i) => i !== index));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (formData: {
+    name: string;
+    description: string;
+    capacity: number;
+    equipment: string[];
+    images: string[];
+  }) => {
     setIsSubmitting(true);
 
     try {
@@ -89,11 +88,8 @@ const CreateRoom = () => {
       }
 
       const roomData = {
-        name,
-        description,
-        capacity: parseInt(capacity),
-        equipment,
-        user_id: user.id
+        ...formData,
+        user_id: user.id,
       };
 
       let error;
@@ -153,75 +149,12 @@ const CreateRoom = () => {
             <CardTitle>{editId ? "Edit Room" : "Create New Room"}</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="name">Room Name</Label>
-                <Input
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="capacity">Capacity</Label>
-                <Input
-                  id="capacity"
-                  type="number"
-                  min="1"
-                  value={capacity}
-                  onChange={(e) => setCapacity(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Equipment</Label>
-                <div className="flex gap-2">
-                  <Input
-                    value={newEquipment}
-                    onChange={(e) => setNewEquipment(e.target.value)}
-                    placeholder="Add equipment..."
-                  />
-                  <Button 
-                    type="button"
-                    onClick={handleAddEquipment}
-                    variant="secondary"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {equipment.map((item, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md"
-                    >
-                      <span className="text-sm">{item}</span>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="h-4 w-4 p-0"
-                        onClick={() => handleRemoveEquipment(index)}
-                      >
-                        <X className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? (editId ? "Updating..." : "Creating...") : (editId ? "Update Room" : "Create Room")}
-              </Button>
-            </form>
+            <RoomForm
+              initialData={initialData}
+              onSubmit={handleSubmit}
+              isSubmitting={isSubmitting}
+              submitLabel={editId ? "Update Room" : "Create Room"}
+            />
           </CardContent>
         </Card>
       </div>

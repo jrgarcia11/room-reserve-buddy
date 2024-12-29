@@ -5,8 +5,9 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { supabase } from "@/integrations/supabase/client";
 
-const images = [
+const defaultImages = [
   "photo-1721322800607-8c38375eef04",
   "photo-1483058712412-4245e9b90334",
   "photo-1487058792275-0ad4aaf24ca7",
@@ -15,16 +16,26 @@ const images = [
 
 interface ImageCarouselProps {
   className?: string;
+  images?: string[];
 }
 
-export function ImageCarousel({ className }: ImageCarouselProps) {
+export function ImageCarousel({ className, images }: ImageCarouselProps) {
+  const renderImage = (imageId: string) => {
+    if (images) {
+      return `${supabase.storage.from('room-images').getPublicUrl(imageId).data.publicUrl}`;
+    }
+    return `https://images.unsplash.com/${imageId}?auto=format&fit=crop&w=800`;
+  };
+
+  const displayImages = images?.length ? images : defaultImages;
+
   return (
     <Carousel className={className}>
       <CarouselContent>
-        {images.map((imageId) => (
+        {displayImages.map((imageId) => (
           <CarouselItem key={imageId}>
             <img
-              src={`https://images.unsplash.com/${imageId}?auto=format&fit=crop&w=800`}
+              src={renderImage(imageId)}
               alt="Room"
               className="w-full h-48 object-cover rounded-t-lg"
             />

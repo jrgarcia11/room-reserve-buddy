@@ -82,6 +82,7 @@ export type Database = {
           description: string | null
           equipment: string[] | null
           id: string
+          images: string[] | null
           name: string
           updated_at: string
           user_id: string | null
@@ -92,6 +93,7 @@ export type Database = {
           description?: string | null
           equipment?: string[] | null
           id?: string
+          images?: string[] | null
           name: string
           updated_at?: string
           user_id?: string | null
@@ -102,6 +104,7 @@ export type Database = {
           description?: string | null
           equipment?: string[] | null
           id?: string
+          images?: string[] | null
           name?: string
           updated_at?: string
           user_id?: string | null
