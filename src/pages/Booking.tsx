@@ -6,7 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { setHours, setMinutes, addHours } from "date-fns";
-import { Music, CalendarDays, Clock } from "lucide-react";
+import { Music, CalendarDays, Clock, ArrowLeft } from "lucide-react";
 import { ImageCarousel } from "@/components/ImageCarousel";
 import { BookingCalendar } from "@/components/booking/BookingCalendar";
 import { TimeSlotPicker } from "@/components/booking/TimeSlotPicker";
@@ -124,6 +124,14 @@ export default function Booking() {
 
   return (
     <div className="container py-12">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="mb-4"
+        onClick={() => navigate("/")}
+      >
+        <ArrowLeft className="h-5 w-5" />
+      </Button>
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">

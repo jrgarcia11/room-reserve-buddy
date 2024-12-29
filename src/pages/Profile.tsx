@@ -6,8 +6,9 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CalendarDays } from "lucide-react";
+import { CalendarDays, ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
+import { Button } from "@/components/ui/button";
 
 type Booking = Tables<"bookings"> & {
   rooms: Tables<"rooms">;
@@ -62,6 +63,14 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-slate-50 py-12">
       <div className="container px-4 max-w-4xl mx-auto">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="mb-4"
+          onClick={() => navigate("/")}
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
         <div className="space-y-8">
           <Card>
             <CardHeader>
