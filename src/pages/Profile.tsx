@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CalendarDays, ArrowLeft, Plus, Clock } from "lucide-react";
+import { CalendarDays, ArrowLeft, Plus, Clock, Building, Music } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 
@@ -58,6 +58,21 @@ const Profile = () => {
     enabled: !!userId,
   });
 
+  const { data: rooms, isLoading: isLoadingRooms } = useQuery({
+    queryKey: ["user-rooms", userId],
+    queryFn: async () => {
+      if (!userId) return null;
+      const { data, error } = await supabase
+        .from("rooms")
+        .select("*")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!userId,
+  });
+
   if (!userId) return null;
 
   return (
@@ -102,6 +117,66 @@ const Profile = () => {
                   </div>
                 )}
               </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Building className="h-5 w-5 text-primary" />
+                Your Rooms
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoadingRooms ? (
+                <div className="space-y-4">
+                  {[1, 2].map((i) => (
+                    <Skeleton key={i} className="h-24 w-full rounded-lg" />
+                  ))}
+                </div>
+              ) : rooms?.length === 0 ? (
+                <div className="text-center py-8">
+                  <Building className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+                  <p className="text-muted-foreground">No rooms created yet</p>
+                  <Button 
+                    variant="outline" 
+                    className="mt-4"
+                    onClick={() => navigate("/create-room")}
+                  >
+                    Create Your First Room
+                  </Button>
+                </div>
+              ) : (
+                <div className="grid gap-4">
+                  {rooms?.map((room) => (
+                    <Card key={room.id} className="hover:shadow-md transition-shadow">
+                      <CardContent className="p-4">
+                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <Music className="h-4 w-4 text-primary" />
+                              <h4 className="font-medium text-lg">{room.name}</h4>
+                            </div>
+                            <p className="text-sm text-muted-foreground mt-1 line-clamp-1">
+                              {room.description}
+                            </p>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {room.equipment?.map((item) => (
+                              <span
+                                key={item}
+                                className="inline-block bg-secondary px-2 py-0.5 text-xs rounded"
+                              >
+                                {item}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
 
