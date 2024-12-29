@@ -6,7 +6,7 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export type Database = {
+export interface Database {
   public: {
     Tables: {
       bookings: {
@@ -131,5 +131,3 @@ export type Database = {
     }
   }
 }
-
-export type Room = Database['public']['Tables']['rooms']['Row'];
