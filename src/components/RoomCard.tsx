@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { CalendarDays, Music } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ImageCarousel } from "./ImageCarousel";
 
@@ -15,7 +16,7 @@ interface RoomCardProps {
 export function RoomCard({ id, name, description, capacity, equipment, isAuthenticated }: RoomCardProps) {
   const navigate = useNavigate();
 
-  const handleBookNow = () => {
+  const handleBooking = () => {
     if (!isAuthenticated) {
       navigate("/login");
       return;
@@ -24,21 +25,37 @@ export function RoomCard({ id, name, description, capacity, equipment, isAuthent
   };
 
   return (
-    <Card>
-      <CardHeader className="p-0">
-        <ImageCarousel className="rounded-t-lg h-48 overflow-hidden" />
+    <Card className="w-full transition-all">
+      <ImageCarousel className="h-48" />
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Music className="h-5 w-5 text-primary" />
+          {name}
+        </CardTitle>
+        <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <CardTitle>{name}</CardTitle>
-        <p>{description}</p>
-        <p>Capacity: {capacity}</p>
-        <p>Equipment: {equipment.join(", ")}</p>
-      </CardContent>
-      <CardFooter>
-        <Button onClick={handleBookNow}>
+        <div className="mb-3">
+          <p className="text-sm text-muted-foreground">Capacity: {capacity} people</p>
+          <div className="mt-2">
+            {equipment.map((item) => (
+              <span
+                key={item}
+                className="mr-2 inline-block bg-secondary px-2 py-0.5 text-xs"
+              >
+                {item}
+              </span>
+            ))}
+          </div>
+        </div>
+        <Button 
+          className="w-full gap-2" 
+          onClick={handleBooking}
+        >
+          <CalendarDays className="h-4 w-4" />
           {isAuthenticated ? "Book Now" : "Login to Book"}
         </Button>
-      </CardFooter>
+      </CardContent>
     </Card>
   );
 }
