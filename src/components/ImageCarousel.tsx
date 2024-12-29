@@ -20,13 +20,13 @@ interface ImageCarouselProps {
 export function ImageCarousel({ className }: ImageCarouselProps) {
   return (
     <Carousel className={className}>
-      <CarouselContent className="h-full">
+      <CarouselContent>
         {images.map((imageId) => (
-          <CarouselItem key={imageId} className="h-full">
+          <CarouselItem key={imageId}>
             <img
               src={`https://images.unsplash.com/${imageId}?auto=format&fit=crop&w=800`}
               alt="Room"
-              className="w-full h-full object-cover"
+              className="w-full h-48 object-cover rounded-t-lg"
             />
           </CarouselItem>
         ))}
