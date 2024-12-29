@@ -61,10 +61,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-slate-50 py-12">
       <div className="container px-4">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold tracking-tight text-primary">
-            Practice Room Booking
-          </h1>
+        <div className="flex justify-end mb-8">
           {isAuthenticated ? (
             <Button variant="outline" onClick={handleLogout}>
               <LogOut className="mr-2 h-4 w-4" />
@@ -77,8 +74,16 @@ const Index = () => {
             </Button>
           )}
         </div>
-        
+
         <div className="mb-12 text-center">
+          <div className="mb-4">
+            <img 
+              src="/lovable-uploads/aac7c64e-04f1-43ba-9fc5-a6f47582a661.png" 
+              alt="Geometric illustration with figures" 
+              className="w-32 h-32 mx-auto"
+            />
+          </div>
+          <h1 className="text-3xl font-bold text-primary mb-2">Drum Room</h1>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
             Reserve your perfect practice space. Choose from our selection of
             well-equipped rooms for individual or group practice.
