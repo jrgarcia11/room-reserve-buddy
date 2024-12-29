@@ -154,7 +154,7 @@ export default function Booking() {
             </div>
             <div>
               <ImageCarousel 
-                className="rounded-lg overflow-hidden" 
+                className="rounded-lg overflow-hidden h-[400px]" 
                 images={room.images}
               />
             </div>
