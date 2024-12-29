@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -7,15 +7,25 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 const CreateRoom = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [capacity, setCapacity] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error("Please login to create a room");
+        navigate("/login");
+      }
+    };
+    checkAuth();
+  }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,37 +35,28 @@ const CreateRoom = () => {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
-        toast({
-          title: "Error",
-          description: "You must be logged in to create a room",
-          variant: "destructive",
-        });
+        toast.error("You must be logged in to create a room");
         navigate("/login");
         return;
       }
 
-      const { error } = await supabase.from("rooms").insert({
-        name,
-        description,
-        capacity: parseInt(capacity),
-        equipment: [],
-        user_id: user.id
-      });
+      const { error } = await supabase
+        .from("rooms")
+        .insert({
+          name,
+          description,
+          capacity: parseInt(capacity),
+          equipment: [],
+          user_id: user.id
+        });
 
       if (error) throw error;
 
-      toast({
-        title: "Success",
-        description: "Room created successfully",
-      });
+      toast.success("Room created successfully");
       navigate("/profile");
     } catch (error) {
       console.error("Error creating room:", error);
-      toast({
-        title: "Error",
-        description: "Failed to create room. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to create room. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
