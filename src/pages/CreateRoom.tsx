@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 
 const CreateRoom = () => {
@@ -18,6 +18,8 @@ const CreateRoom = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [capacity, setCapacity] = useState("");
+  const [equipment, setEquipment] = useState<string[]>([]);
+  const [newEquipment, setNewEquipment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(!!editId);
 
@@ -49,6 +51,7 @@ const CreateRoom = () => {
           setName(data.name);
           setDescription(data.description || "");
           setCapacity(data.capacity.toString());
+          setEquipment(data.equipment || []);
         }
       } catch (error) {
         console.error("Error fetching room:", error);
@@ -61,6 +64,16 @@ const CreateRoom = () => {
 
     fetchRoom();
   }, [editId, navigate]);
+
+  const handleAddEquipment = () => {
+    if (!newEquipment.trim()) return;
+    setEquipment([...equipment, newEquipment.trim()]);
+    setNewEquipment("");
+  };
+
+  const handleRemoveEquipment = (index: number) => {
+    setEquipment(equipment.filter((_, i) => i !== index));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,7 +92,7 @@ const CreateRoom = () => {
         name,
         description,
         capacity: parseInt(capacity),
-        equipment: [],
+        equipment,
         user_id: user.id
       };
 
@@ -168,6 +181,42 @@ const CreateRoom = () => {
                   onChange={(e) => setCapacity(e.target.value)}
                   required
                 />
+              </div>
+              <div className="space-y-2">
+                <Label>Equipment</Label>
+                <div className="flex gap-2">
+                  <Input
+                    value={newEquipment}
+                    onChange={(e) => setNewEquipment(e.target.value)}
+                    placeholder="Add equipment..."
+                  />
+                  <Button 
+                    type="button"
+                    onClick={handleAddEquipment}
+                    variant="secondary"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {equipment.map((item, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md"
+                    >
+                      <span className="text-sm">{item}</span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-4 w-4 p-0"
+                        onClick={() => handleRemoveEquipment(index)}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
               </div>
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? (editId ? "Updating..." : "Creating...") : (editId ? "Update Room" : "Create Room")}
