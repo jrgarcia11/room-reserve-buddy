@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { format, addHours, setHours, setMinutes } from "date-fns";
+import { setHours, setMinutes, addHours } from "date-fns";
 import { Music, CalendarDays, Clock } from "lucide-react";
+import { ImageCarousel } from "@/components/ImageCarousel";
+import { BookingCalendar } from "@/components/booking/BookingCalendar";
+import { TimeSlotPicker } from "@/components/booking/TimeSlotPicker";
 
-// Fetch room details
 async function fetchRoom(roomId: string) {
   const { data, error } = await supabase
     .from('rooms')
@@ -53,11 +54,6 @@ async function createBooking({ roomId, startTime, endTime }: { roomId: string, s
   if (error) throw error;
   return data;
 }
-
-const timeSlots = Array.from({ length: 12 }, (_, i) => {
-  const hour = i + 9; // Start from 9 AM
-  return `${hour}:00`;
-});
 
 export default function Booking() {
   const { roomId } = useParams();
@@ -106,10 +102,6 @@ export default function Booking() {
     },
   });
 
-  const handleTimeSelect = (time: string) => {
-    setSelectedTime(time);
-  };
-
   const handleBooking = () => {
     if (!selectedDate || !selectedTime || !roomId) return;
 
@@ -124,23 +116,6 @@ export default function Booking() {
     });
   };
 
-  const isTimeSlotBooked = (time: string) => {
-    if (!selectedDate || !existingBookings) return false;
-
-    const [hours] = time.split(':').map(Number);
-    const slotStart = setHours(setMinutes(selectedDate, 0), hours);
-    const slotEnd = addHours(slotStart, 1);
-
-    return existingBookings.some(booking => {
-      const bookingStart = new Date(booking.start_time);
-      const bookingEnd = new Date(booking.end_time);
-      return (
-        (slotStart >= bookingStart && slotStart < bookingEnd) ||
-        (slotEnd > bookingStart && slotEnd <= bookingEnd)
-      );
-    });
-  };
-
   if (roomLoading) {
     return <div className="container py-12">Loading...</div>;
   }
@@ -152,6 +127,7 @@ export default function Booking() {
   return (
     <div className="container py-12">
       <Card>
+        <ImageCarousel className="mb-4" />
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Music className="h-5 w-5 text-primary" />
@@ -165,12 +141,9 @@ export default function Booking() {
               <CalendarDays className="h-5 w-5" />
               Select Date
             </h3>
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={setSelectedDate}
-              disabled={(date) => date < new Date()}
-              className="rounded-md border"
+            <BookingCalendar
+              selectedDate={selectedDate}
+              setSelectedDate={setSelectedDate}
             />
           </div>
 
@@ -180,22 +153,12 @@ export default function Booking() {
                 <Clock className="h-5 w-5" />
                 Select Time
               </h3>
-              <div className="grid grid-cols-3 gap-2">
-                {timeSlots.map((time) => {
-                  const isBooked = isTimeSlotBooked(time);
-                  return (
-                    <Button
-                      key={time}
-                      variant={selectedTime === time ? "default" : "outline"}
-                      className={isBooked ? "opacity-50 cursor-not-allowed" : ""}
-                      onClick={() => !isBooked && handleTimeSelect(time)}
-                      disabled={isBooked}
-                    >
-                      {time}
-                    </Button>
-                  );
-                })}
-              </div>
+              <TimeSlotPicker
+                selectedDate={selectedDate}
+                selectedTime={selectedTime}
+                existingBookings={existingBookings || []}
+                onTimeSelect={setSelectedTime}
+              />
             </div>
           )}
 

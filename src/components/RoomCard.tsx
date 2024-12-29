@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { CalendarDays, Music } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { ImageCarousel } from "./ImageCarousel";
 
 interface RoomCardProps {
   id: string;
@@ -25,6 +26,7 @@ export function RoomCard({ id, name, description, capacity, equipment, isAuthent
 
   return (
     <Card className="w-full transition-all">
+      <ImageCarousel />
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Music className="h-5 w-5 text-primary" />
