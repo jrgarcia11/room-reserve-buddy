@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CalendarDays, ArrowLeft } from "lucide-react";
+import { CalendarDays, ArrowLeft, Plus } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 
@@ -63,14 +63,19 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-slate-50 py-12">
       <div className="container px-4 max-w-4xl mx-auto">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="mb-4"
-          onClick={() => navigate("/")}
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
+        <div className="flex justify-between items-center mb-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/")}
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <Button onClick={() => navigate("/create-room")}>
+            <Plus className="h-5 w-5 mr-2" />
+            Create Room
+          </Button>
+        </div>
         <div className="space-y-8">
           <Card>
             <CardHeader>

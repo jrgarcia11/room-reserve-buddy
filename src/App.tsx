@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Booking from "./pages/Booking";
 import Profile from "./pages/Profile";
+import CreateRoom from "./pages/CreateRoom";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,7 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/booking/:roomId" element={<Booking />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/create-room" element={<CreateRoom />} />
           <Route path="/" element={<Index />} />
         </Routes>
       </BrowserRouter>
