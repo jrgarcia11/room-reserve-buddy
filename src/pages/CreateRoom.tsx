@@ -22,11 +22,24 @@ const CreateRoom = () => {
     setIsSubmitting(true);
 
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast({
+          title: "Error",
+          description: "You must be logged in to create a room",
+          variant: "destructive",
+        });
+        navigate("/login");
+        return;
+      }
+
       const { error } = await supabase.from("rooms").insert({
         name,
         description,
         capacity: parseInt(capacity),
         equipment: [],
+        user_id: user.id
       });
 
       if (error) throw error;
@@ -37,6 +50,7 @@ const CreateRoom = () => {
       });
       navigate("/profile");
     } catch (error) {
+      console.error("Error creating room:", error);
       toast({
         title: "Error",
         description: "Failed to create room. Please try again.",
