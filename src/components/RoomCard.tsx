@@ -36,8 +36,8 @@ export function RoomCard({
   return (
     <Card className="w-full transition-all">
       <ImageCarousel images={images} />
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+      <CardHeader className="bg-gradient-to-r from-[#F2FCE2] to-[#F1F0FB]">
+        <CardTitle className="flex items-center gap-2 font-bebas tracking-wider">
           <Music className="h-5 w-5 text-primary" />
           {name}
         </CardTitle>
