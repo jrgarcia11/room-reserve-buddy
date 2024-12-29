@@ -39,7 +39,7 @@ export function RoomCard({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Music className="h-5 w-5 text-primary" />
-          {name}
+          <span className="font-bebas tracking-wider">{name}</span>
         </CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
