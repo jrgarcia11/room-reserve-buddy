@@ -123,70 +123,68 @@ export default function Booking() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-12">
-      <div className="container">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="mb-4"
-          onClick={() => navigate("/")}
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        <Card className="bg-gradient-to-r from-[#F2FCE2] to-[#F1F0FB]">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Music className="h-5 w-5 text-primary" />
-              {room.name}
-            </CardTitle>
-            <CardDescription>{room.description}</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
-                  <CalendarDays className="h-5 w-5" />
-                  Select Date
-                </h3>
-                <BookingCalendar
-                  selectedDate={selectedDate}
-                  setSelectedDate={setSelectedDate}
-                />
-              </div>
-              <div className="h-[400px]">
-                <ImageCarousel 
-                  className="h-full rounded-lg overflow-hidden" 
-                  images={room.images}
-                  fullSize
-                />
-              </div>
+    <div className="container py-12">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="mb-4"
+        onClick={() => navigate("/")}
+      >
+        <ArrowLeft className="h-5 w-5" />
+      </Button>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Music className="h-5 w-5 text-primary" />
+            {room.name}
+          </CardTitle>
+          <CardDescription>{room.description}</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
+                <CalendarDays className="h-5 w-5" />
+                Select Date
+              </h3>
+              <BookingCalendar
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+              />
             </div>
+            <div className="h-[400px]">
+              <ImageCarousel 
+                className="h-full rounded-lg overflow-hidden" 
+                images={room.images}
+                fullSize
+              />
+            </div>
+          </div>
 
-            {selectedDate && (
-              <div>
-                <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
-                  <Clock className="h-5 w-5" />
-                  Select Time
-                </h3>
-                <TimeSlotPicker
-                  selectedDate={selectedDate}
-                  selectedTime={selectedTime}
-                  existingBookings={existingBookings || []}
-                  onTimeSelect={setSelectedTime}
-                />
-              </div>
-            )}
+          {selectedDate && (
+            <div>
+              <h3 className="text-lg font-medium mb-3 flex items-center gap-2">
+                <Clock className="h-5 w-5" />
+                Select Time
+              </h3>
+              <TimeSlotPicker
+                selectedDate={selectedDate}
+                selectedTime={selectedTime}
+                existingBookings={existingBookings || []}
+                onTimeSelect={setSelectedTime}
+              />
+            </div>
+          )}
 
-            <Button
-              className="w-full"
-              disabled={!selectedDate || !selectedTime || bookingMutation.isPending}
-              onClick={handleBooking}
-            >
-              {bookingMutation.isPending ? "Booking..." : "Confirm Booking"}
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+          <Button
+            className="w-full"
+            disabled={!selectedDate || !selectedTime || bookingMutation.isPending}
+            onClick={handleBooking}
+          >
+            {bookingMutation.isPending ? "Booking..." : "Confirm Booking"}
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }
