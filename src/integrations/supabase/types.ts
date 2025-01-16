@@ -83,6 +83,8 @@ export type Database = {
           equipment: string[] | null
           id: string
           images: string[] | null
+          latitude: number | null
+          longitude: number | null
           name: string
           updated_at: string
           user_id: string | null
@@ -94,6 +96,8 @@ export type Database = {
           equipment?: string[] | null
           id?: string
           images?: string[] | null
+          latitude?: number | null
+          longitude?: number | null
           name: string
           updated_at?: string
           user_id?: string | null
@@ -105,6 +109,8 @@ export type Database = {
           equipment?: string[] | null
           id?: string
           images?: string[] | null
+          latitude?: number | null
+          longitude?: number | null
           name?: string
           updated_at?: string
           user_id?: string | null
