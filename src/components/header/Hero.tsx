@@ -14,10 +14,12 @@ export const Hero = ({ isAuthenticated }: HeroProps) => {
           className="w-32 h-32"
         />
         <div className="text-center">
-          <h1 className="text-6xl font-bold text-primary font-bebas tracking-wider text-left">Drum Room</h1>
-          <p className="text-xl text-muted-foreground mt-2">
-            Reserve your perfect <SlotMachineText />
+          <p className="text-xl text-muted-foreground mb-2">
+            Reserve your perfect practice space
           </p>
+          <h1 className="text-6xl font-bold text-primary font-bebas tracking-wider text-left">
+            <SlotMachineText />
+          </h1>
         </div>
       </div>
       
