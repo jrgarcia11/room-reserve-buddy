@@ -1,3 +1,5 @@
+import { SlotMachineText } from "./SlotMachineText";
+
 interface HeroProps {
   isAuthenticated: boolean;
 }
@@ -13,7 +15,9 @@ export const Hero = ({ isAuthenticated }: HeroProps) => {
         />
         <div className="text-center">
           <h1 className="text-6xl font-bold text-primary font-bebas tracking-wider text-left">Drum Room</h1>
-          <p className="text-xl text-muted-foreground mt-2">Reserve your perfect rehearsal or recording studio</p>
+          <p className="text-xl text-muted-foreground mt-2">
+            Reserve your perfect <SlotMachineText />
+          </p>
         </div>
       </div>
       
