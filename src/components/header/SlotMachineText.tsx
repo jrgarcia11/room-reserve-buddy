@@ -3,11 +3,14 @@ import { useEffect, useState } from "react";
 const spaces = [
   "Drum Room",
   "Recording Studio",
-  "Practice Room",
-  "Jam Space",
-  "Performance Venue",
-  "Band Room",
-  "Music Studio"
+  "Practice Space",
+  "Jam Session",
+  "Venue",
+  "Painting Studio",
+  "Padded Cell",
+  "Gun Range",
+  "Jazz Kissa",
+  "3rd Place"
 ];
 
 export const SlotMachineText = () => {
