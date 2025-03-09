@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useEffect, useState } from "react";
@@ -5,7 +6,6 @@ import { useQuery } from "@tanstack/react-query";
 import { AuthButtons } from "@/components/header/AuthButtons";
 import { Hero } from "@/components/header/Hero";
 import { RoomsList } from "@/components/rooms/RoomsList";
-import { useNavigate } from "react-router-dom";
 
 async function fetchRooms() {
   const { data, error } = await supabase.from("rooms").select("*");
@@ -15,7 +15,6 @@ async function fetchRooms() {
 
 const Index = () => {
   const { toast } = useToast();
-  const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   const { data: rooms, isLoading, error } = useQuery({
@@ -24,14 +23,17 @@ const Index = () => {
   });
 
   useEffect(() => {
-    supabase.auth.onAuthStateChange((event, session) => {
-      if (!session) {
-        navigate("/login");
-        return;
-      }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setIsAuthenticated(!!session);
     });
-  }, [navigate]);
+
+    // Check initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsAuthenticated(!!session);
+    });
+
+    return () => subscription?.unsubscribe();
+  }, []);
 
   if (error) {
     toast({

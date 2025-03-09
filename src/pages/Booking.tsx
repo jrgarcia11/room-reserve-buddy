@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -59,16 +60,20 @@ export default function Booking() {
   const { toast } = useToast();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate("/login");
-      }
-    };
-    checkAuth();
-  }, [navigate]);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsAuthenticated(!!session);
+    });
+
+    // Check initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsAuthenticated(!!session);
+    });
+
+    return () => subscription?.unsubscribe();
+  }, []);
 
   const { data: room, isLoading: roomLoading } = useQuery({
     queryKey: ['room', roomId],
@@ -101,6 +106,11 @@ export default function Booking() {
   });
 
   const handleBooking = () => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+
     if (!selectedDate || !selectedTime || !roomId) return;
 
     const [hours] = selectedTime.split(':').map(Number);
@@ -181,7 +191,11 @@ export default function Booking() {
             disabled={!selectedDate || !selectedTime || bookingMutation.isPending}
             onClick={handleBooking}
           >
-            {bookingMutation.isPending ? "Booking..." : "Confirm Booking"}
+            {!isAuthenticated 
+              ? "Login to Book" 
+              : bookingMutation.isPending 
+                ? "Booking..." 
+                : "Confirm Booking"}
           </Button>
         </CardContent>
       </Card>

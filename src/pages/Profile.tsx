@@ -67,7 +67,9 @@ const Profile = () => {
     enabled: !!userId,
   });
 
-  if (!userId) return null;
+  if (!userId) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 py-12">
