@@ -1,5 +1,4 @@
-
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,50 +7,23 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { setHours, setMinutes, addHours } from "date-fns";
 import { Music, CalendarDays, Clock, ArrowLeft } from "lucide-react";
-import { ImageCarousel } from "@/components/ImageCarousel";
+import { ImageCarousel } from "@/components/rooms/ImageCarousel";
 import { BookingCalendar } from "@/components/booking/BookingCalendar";
 import { TimeSlotPicker } from "@/components/booking/TimeSlotPicker";
-
-async function fetchRoom(roomId: string) {
-  const { data, error } = await supabase
-    .from('rooms')
-    .select('*')
-    .eq('id', roomId)
-    .single();
-  
-  if (error) throw error;
-  return data;
-}
-
-async function fetchBookings(roomId: string) {
-  const { data, error } = await supabase
-    .from('bookings')
-    .select('*')
-    .eq('room_id', roomId);
-  
-  if (error) throw error;
-  return data;
-}
+import { useAuth } from "@/hooks/useAuth";
+import { fetchRoom } from "@/services/rooms";
+import { fetchBookings, createBooking as createBookingService } from "@/services/bookings";
 
 async function createBooking({ roomId, startTime, endTime }: { roomId: string, startTime: Date, endTime: Date }) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("User not authenticated");
 
-  const { data, error } = await supabase
-    .from('bookings')
-    .insert([
-      {
-        room_id: roomId,
-        user_id: user.id,
-        start_time: startTime.toISOString(),
-        end_time: endTime.toISOString(),
-      }
-    ])
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
+  return createBookingService({
+    room_id: roomId,
+    user_id: user.id,
+    start_time: startTime.toISOString(),
+    end_time: endTime.toISOString(),
+  });
 }
 
 export default function Booking() {
@@ -60,20 +32,7 @@ export default function Booking() {
   const { toast } = useToast();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setIsAuthenticated(!!session);
-    });
-
-    // Check initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setIsAuthenticated(!!session);
-    });
-
-    return () => subscription?.unsubscribe();
-  }, []);
+  const { isAuthenticated } = useAuth();
 
   const { data: room, isLoading: roomLoading } = useQuery({
     queryKey: ['room', roomId],

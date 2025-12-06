@@ -1,6 +1,6 @@
-import { RoomCard } from "@/components/RoomCard";
+import { RoomCard } from "@/components/rooms/RoomCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Room } from "@/integrations/supabase/types/table.types";
+import type { Room } from "@/services/rooms";
 
 interface RoomsListProps {
   rooms: Room[] | undefined;

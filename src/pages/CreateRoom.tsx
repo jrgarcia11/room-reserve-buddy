@@ -1,18 +1,19 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { RoomForm } from "@/components/rooms/RoomForm";
-import { useState } from "react";
+import { BackButton } from "@/components/layout/BackButton";
+import { PageLayout } from "@/components/layout/PageLayout";
+import { useRequireAuth } from "@/hooks/useRequireAuth";
+import { fetchRoom, createRoom, updateRoom } from "@/services/rooms";
 
 const CreateRoom = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const editId = searchParams.get("edit");
+  const { userId, isLoading: authLoading } = useRequireAuth();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(!!editId);
@@ -25,38 +26,18 @@ const CreateRoom = () => {
   } | undefined>();
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        toast.error("Please login to create a room");
-        navigate("/login");
-      }
-    };
-    checkAuth();
-  }, [navigate]);
-
-  useEffect(() => {
-    const fetchRoom = async () => {
+    const loadRoom = async () => {
       if (!editId) return;
 
       try {
-        const { data, error } = await supabase
-          .from("rooms")
-          .select("*")
-          .eq("id", editId)
-          .single();
-
-        if (error) throw error;
-
-        if (data) {
-          setInitialData({
-            name: data.name,
-            description: data.description || "",
-            capacity: data.capacity.toString(),
-            equipment: data.equipment || [],
-            images: data.images || [],
-          });
-        }
+        const data = await fetchRoom(editId);
+        setInitialData({
+          name: data.name,
+          description: data.description || "",
+          capacity: data.capacity.toString(),
+          equipment: data.equipment || [],
+          images: data.images || [],
+        });
       } catch (error) {
         console.error("Error fetching room:", error);
         toast.error("Failed to fetch room details");
@@ -66,7 +47,7 @@ const CreateRoom = () => {
       }
     };
 
-    fetchRoom();
+    loadRoom();
   }, [editId, navigate]);
 
   const handleSubmit = async (formData: {
@@ -76,36 +57,25 @@ const CreateRoom = () => {
     equipment: string[];
     images: string[];
   }) => {
+    if (!userId) {
+      toast.error("You must be logged in to create a room");
+      navigate("/login");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        toast.error("You must be logged in to create a room");
-        navigate("/login");
-        return;
-      }
-
       const roomData = {
         ...formData,
-        user_id: user.id,
+        user_id: userId,
       };
 
-      let error;
-
       if (editId) {
-        ({ error } = await supabase
-          .from("rooms")
-          .update(roomData)
-          .eq("id", editId));
+        await updateRoom(editId, roomData);
       } else {
-        ({ error } = await supabase
-          .from("rooms")
-          .insert(roomData));
+        await createRoom(roomData);
       }
-
-      if (error) throw error;
 
       toast.success(editId ? "Room updated successfully" : "Room created successfully");
       navigate("/profile");
@@ -117,48 +87,41 @@ const CreateRoom = () => {
     }
   };
 
+  if (authLoading) {
+    return null;
+  }
+
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 py-12">
-        <div className="container px-4 max-w-2xl mx-auto">
-          <Card>
-            <CardContent className="p-8">
-              <div className="flex items-center justify-center">
-                Loading...
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+      <PageLayout className="max-w-2xl mx-auto">
+        <Card>
+          <CardContent className="p-8">
+            <div className="flex items-center justify-center">
+              Loading...
+            </div>
+          </CardContent>
+        </Card>
+      </PageLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-12">
-      <div className="container px-4 max-w-2xl mx-auto">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="mb-4"
-          onClick={() => navigate("/profile")}
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        <Card>
-          <CardHeader>
-            <CardTitle>{editId ? "Edit Room" : "Create New Room"}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <RoomForm
-              initialData={initialData}
-              onSubmit={handleSubmit}
-              isSubmitting={isSubmitting}
-              submitLabel={editId ? "Update Room" : "Create Room"}
-            />
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+    <PageLayout className="max-w-2xl mx-auto">
+      <BackButton to="/profile" />
+      <Card>
+        <CardHeader>
+          <CardTitle>{editId ? "Edit Room" : "Create New Room"}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <RoomForm
+            initialData={initialData}
+            onSubmit={handleSubmit}
+            isSubmitting={isSubmitting}
+            submitLabel={editId ? "Update Room" : "Create Room"}
+          />
+        </CardContent>
+      </Card>
+    </PageLayout>
   );
 };
 
