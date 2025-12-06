@@ -4,14 +4,10 @@ import { CalendarDays, Clock } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
-import { Tables } from "@/integrations/supabase/types";
-
-type Booking = Tables<"bookings"> & {
-  rooms: Tables<"rooms">;
-};
+import type { BookingWithRoom } from "@/services/bookings";
 
 interface UserBookingsListProps {
-  bookings: Booking[] | null;
+  bookings: BookingWithRoom[] | null;
   isLoading: boolean;
 }
 
@@ -66,10 +62,7 @@ export function UserBookingsList({ bookings, isLoading }: UserBookingsListProps)
                 <CardContent className="p-4">
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
-                      <h4 className="font-medium text-lg">{booking.rooms.name}</h4>
-                      <p className="text-sm text-muted-foreground line-clamp-1">
-                        {booking.rooms.description}
-                      </p>
+                      <h4 className="font-medium text-lg">{booking.rooms?.name}</h4>
                     </div>
                     <div className="flex flex-col gap-2 text-sm text-muted-foreground">
                       <div className="flex items-center gap-2">

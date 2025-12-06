@@ -2,9 +2,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Building } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { UserRoomCard } from "@/components/UserRoomCard";
+import { UserRoomCard } from "@/components/rooms/UserRoomCard";
 import { useNavigate } from "react-router-dom";
-import { Room } from "@/integrations/supabase/types/table.types";
+import type { Room } from "@/services/rooms";
 
 interface UserRoomsListProps {
   rooms: Room[] | null;
