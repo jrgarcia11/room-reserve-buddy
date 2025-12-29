@@ -49,6 +49,7 @@ export default function Login() {
             appearance={{ theme: ThemeSupa }}
             theme="light"
             providers={["github"]}
+            redirectTo={window.location.origin}
           />
         </div>
       </div>
