@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { useQuery } from "@tanstack/react-query";
 import { AuthButtons } from "@/components/header/AuthButtons";
@@ -16,13 +17,15 @@ const Index = () => {
     queryFn: fetchRooms,
   });
 
-  if (error) {
-    toast({
-      title: "Error loading rooms",
-      description: "Please try again later",
-      variant: "destructive",
-    });
-  }
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: "Error loading rooms",
+        description: "Please try again later",
+        variant: "destructive",
+      });
+    }
+  }, [error, toast]);
 
   return (
     <PageLayout>
